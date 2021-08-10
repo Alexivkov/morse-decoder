@@ -35,41 +35,35 @@ const MORSE_TABLE = {
   "---..": "8",
   "----.": "9",
   "-----": "0",
+  " ": " ",
 };
 
 function decode(expr) {
-  let arr = [];
+  let fullString = "";
   for (let i = 0; i < expr.length; i += 10) {
-    let arr2 = [];
-    let temp = expr
-      .slice(i, i + 10)
-      .split("")
-      .reverse()
-      .join("");
-    for (let j = 0; j < temp.length; j += 2) {
-      let twoChars;
-
-      twoChars = temp[j] + temp[j + 1];
-      //   console.log(twoChars);
-      if (twoChars === "01") {
-        arr2.push(".");
-      } else if (twoChars === "11") {
-        arr2.push("-");
-      } else if (twoChars === "00") {
-        arr2.push("");
-      } else {
-        arr2 = [" "];
+    let oneSymbol = "";
+    if (expr[i] === "*") {
+      oneSymbol = " ";
+    } else {
+      var tenChars = +expr.slice(i, i + 10);
+      while (tenChars > 0) {
+        let twoChars = tenChars % 100;
+        if (twoChars === 10) {
+          oneSymbol = "." + oneSymbol;
+        } else if (twoChars === 11) {
+          oneSymbol = "-" + oneSymbol;
+        } else if (twoChars === 0) {
+          tenChars = 0;
+        }
+        tenChars = Math.floor(tenChars / 100);
       }
-      // console.log(arr2);
     }
-    if(arr2[0] == " ") arr.push(" ");
-    else arr.push(MORSE_TABLE[arr2.reverse().join("")]);
+    fullString += MORSE_TABLE[oneSymbol];
   }
-  console.log(arr);
-  return arr.join("");
+  return fullString;
 }
 
-console.log(decode("********"));
+console.log(decode("**********00001110"));
 
 module.exports = {
   decode,
